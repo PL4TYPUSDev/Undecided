@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import requests
 import os
+from flask import Flask
+import threading
 
 # =====================
 # CONFIG
@@ -99,7 +101,7 @@ async def commands(ctx):
         description="Here are all available commands:",
         color=discord.Color.purple()
     )
-    embed.add_field(name="/commands", value="Shows this help menu", inline=False)
+    embed.add_field(name="/commands", value="Shows this command menu", inline=False)
     embed.add_field(name="/robux <amount>", value="Calculates Robux after 30% tax", inline=False)
     embed.add_field(name="/gamepass <id>", value="Shows gamepass name, price & regional pricing", inline=False)
 
@@ -129,6 +131,18 @@ async def on_command_error(ctx, error):
             await ctx.reply("❌ Unknown command. Check your DMs 📬", delete_after=5)
         except:
             await ctx.reply("❌ Unknown command. Enable DMs to see help.", delete_after=5)
+
+# =====================
+# FLASK SERVER TO KEEP BOT ONLINE (for Replit / Ping)
+# =====================
+app = Flask("")
+
+@app.route("/")
+def home():
+    return "Bot is running!"
+
+# Run Flask in background
+threading.Thread(target=lambda: app.run(host="0.0.0.0", port=8080)).start()
 
 # =====================
 # RUN BOT
